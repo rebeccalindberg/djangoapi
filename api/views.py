@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from rest_framework import generics, viewsets
+from rest_framework import generics, viewsets, views, status
 from rest_framework.response import Response
 from django.views import View
 from django.http import HttpResponse
@@ -8,6 +8,9 @@ from .serializers import MessageSerializer, UserSerializer
 from .models import Message, User, PreviousFetch
 import json
 
+def index(request):
+    return render(request, 'landingpage.html')
+
 # Fetch all messages
 class MessageList(generics.ListCreateAPIView):
     serializer_class = MessageSerializer
@@ -15,7 +18,7 @@ class MessageList(generics.ListCreateAPIView):
     def get_queryset(self):
         queryset = Message.objects.all()
         
-        # Om get har en queryparameter för /user, hämta alla messages för den usern. Ex: messages/?user=1
+        #Ex: messages/?user=1
         location = self.request.query_params.get('user')
         if location is not None:
             queryset = queryset.filter(itemLocation = location)
@@ -36,26 +39,13 @@ class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserSerializer
     queryset = User.objects.all()
 
-# Delete multiple messages
-class DeleteMessages(View):
-    serializer_class = MessageSerializer
-
-    def post(self, request, *args, **kwargs):
-        if request.method=="POST":
-            json_ids = json.loads(request.body)
-            messages = Message.objects.filter(id__in=json_ids["id"])
-            for message in messages:
-                message.delete()
-            serializer = MessageSerializer(messages, many=True)
-            return HttpResponse(serializer.data)
-
 # Only fetch new messages
 class LatestMessages(generics.ListCreateAPIView):
     serializer_class = MessageSerializer
 
     def get_queryset(self):
         queryset = Message.objects.all()
-        # Hämta senaste fetch tiden från databasen
+
         last_fetch_time = PreviousFetch.objects.values_list('time', flat=True).last()
 
         if last_fetch_time is not None:
@@ -74,10 +64,23 @@ class MessagesInDateRange(viewsets.ViewSet):
         start_time = request.query_params.get('start_date')
         stop_time = request.query_params.get('end_date')
         # Fetch all records from the database in date range, ordered by time
-        records = Message.objects.filter(
+        messages = Message.objects.filter(
         date_sent__gte=start_time,
         date_sent__lte=stop_time
         ).order_by('date_sent')
 
-        serializer = MessageSerializer(records, many=True)
+        serializer = MessageSerializer(messages, many=True)
         return Response(serializer.data)
+
+# /message/delete/?id=1,2
+class DeleteMessagessView(views.APIView):
+    def delete(self, request):
+        messages = request.query_params.get('id')
+        # Split the string of comma-separated IDs on the comma character
+        messages = messages.split(',')
+        # Convert each individual ID to an integer
+        messages = [int(message) for message in messages]
+        items = Message.objects.filter(id__in=messages)
+        for item in items:
+            item.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
