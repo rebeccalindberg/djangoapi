@@ -18,12 +18,13 @@
             }
 
             h2 {
-                margin: 20px 0 5px;
+                margin: 25px 0 0px;
             }
 
             h3 {
                 font-size: 1.05em;
-                margin-top: 20px;
+                margin-top: 15px;
+                margin-bottom: 5px;
             }
 
             p {
@@ -66,7 +67,7 @@
             <h1>Test assignment API</h1>
             <h2>Get/Delete user</h2>
             <h3>http://127.0.0.1:8000/api/user/ <code>GET POST</code></h3>
-            <p>Gets all users. To create a new message, post the following json:
+            <p>Gets all users. To create a new message, post the following json:</p>
             <pre><code>
 {
     "subject": "",
@@ -74,19 +75,19 @@
     "recipient": null
 }
             </code></pre>
-            where recipient is the id of a user.</p>
+            <p>where recipient is the id of a user.</p>
             <h3>http://127.0.0.1:8000/api/user/id <code>GET DELETE</code></h3>
             <p>Replace id by the id of the user, eg. 1.</p>
 
             <h2>Get/Delete message</h2>
             <h3>http://127.0.0.1:8000/api/message/ <code>GET POST</code></h3>
-            <p>Gets all messages. To create a new message, post the following json:
+            <p>Gets all messages. To create a new message, post the following json:</p>
             <pre><code>
 {
     "username": ""
 }
             </code></pre>
-            where recipient is the id of a user.</p>
+            <p>where recipient is the id of a user.</p>
             <h3>http://127.0.0.1:8000/api/message/id <code>GET DELETE</code></h3>
             <p>Replace id by the id of the message, eg. 1.</p>
 
