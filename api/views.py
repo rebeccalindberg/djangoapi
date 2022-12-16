@@ -18,13 +18,13 @@ class MessageList(generics.ListCreateAPIView):
     def get_queryset(self):
         queryset = Message.objects.all()
         
-        #Ex: messages/?user=1
-        location = self.request.query_params.get('user')
-        if location is not None:
-            queryset = queryset.filter(itemLocation = location)
+        #Eg: message/?user=1
+        user = self.request.query_params.get('user')
+        if user is not None:
+            queryset = queryset.filter(recipient = user)
         return queryset
 
-# Single message, with RUD 
+# Single message, RUD 
 class MessageDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = MessageSerializer
     queryset = Message.objects.all()
@@ -34,7 +34,7 @@ class UserList(generics.ListCreateAPIView):
     serializer_class = UserSerializer
     queryset = User.objects.all()
 
-# Single user, with RUD
+# Single user, RUD
 class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserSerializer
     queryset = User.objects.all()
@@ -72,7 +72,7 @@ class MessagesInDateRange(viewsets.ViewSet):
         serializer = MessageSerializer(messages, many=True)
         return Response(serializer.data)
 
-# /message/delete/?id=1,2
+# Delete multiple messages /message/delete/?id=1,2
 class DeleteMessagessView(views.APIView):
     def delete(self, request):
         messages = request.query_params.get('id')
