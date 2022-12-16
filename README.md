@@ -6,6 +6,7 @@
 Start the project and run the following commands to install Django:
 ```
 python3 -m pip install Django
+
 pip install django djangorestframework
 ```
 
