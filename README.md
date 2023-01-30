@@ -1,4 +1,4 @@
-# Test assignment Rebecca
+# Django API
 
 
 
